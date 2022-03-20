@@ -1,0 +1,30 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+    uuid(c0f652b2-4b09-4130-8d9c-87420eaf10a4),
+    version(1.0)
+]
+interface LPCTestServer
+{
+    typedef enum {
+        LPC_COLOR_RED,
+        LPC_COLOR_GREEN,
+        LPC_COLOR_BLUE
+    } LPC_COLOR_E;
+
+    error_status_t lpc_set_color(
+        [in] handle_t    binding,
+        [in] LPC_COLOR_E color
+    );
+
+    error_status_t lpc_get_color(
+        [in]       handle_t     binding,
+        [out, ref] LPC_COLOR_E* color
+    );
+
+    error_status_t lpc_print_msg(
+        [in]         handle_t    binding,
+        [in, string] const char* msg 
+    );
+}

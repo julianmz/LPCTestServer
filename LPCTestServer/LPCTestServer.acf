@@ -1,0 +1,9 @@
+[
+    explicit_handle
+]
+interface LPCTestServer
+{
+    [comm_status, fault_status] lpc_set_color();
+    [comm_status, fault_status] lpc_get_color();
+    [comm_status, fault_status] lpc_print_msg();
+}

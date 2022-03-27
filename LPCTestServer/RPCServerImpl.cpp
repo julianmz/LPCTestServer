@@ -69,19 +69,22 @@ namespace {
                 status = func();
             }
             catch (const std::exception& exception) {
+
                 std::cout << "Exception caught by guard: \"" << exception.what() << "\"" << std::endl;
+                status = RPC_S_CALL_FAILED;
             }
         }
 
         if (impersonationActive) {
 
             const error_status_t statusRevert = RpcRevertToSelf();
-            if (statusRevert != RPC_S_OK)
+            if (statusRevert != RPC_S_OK) {
+                
                 std::cout << "Impersonation could not be reverted" << std::endl;
+                status = statusRevert;
+            }
             else
                 std::cout << "Impersonation reverted" << std::endl;
-
-            status = statusRevert != RPC_S_OK ? statusRevert : status;
         }
 
         return status;

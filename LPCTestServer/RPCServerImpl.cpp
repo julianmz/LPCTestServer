@@ -48,17 +48,22 @@ namespace {
         error_status_t status              = RpcImpersonateClient(binding);
         const bool     impersonationActive = status == RPC_S_OK;
 
-        if      (!impersonationActive)
-            std::cout << "Impersonation has failed" << std::endl;
+        if (!impersonationActive) {
+            
+            std::cout << "Impersonation has failed"
+                      << std::endl;
+        }
         else if (!lpc_test::ThreadHasAdminPrivileges()) {
             
             // NOTE: Checking for admin privileges is purely optional, remove this check whenever you want
             std::cout << "RPC client does not have admin privileges"
                       << std::endl;
-            
+
             status = RPC_S_ACCESS_DENIED;
         }
         else {
+
+            std::cout << "Impersonation and verification successful" << std::endl;
 
             try {
                 status = func();
@@ -66,10 +71,17 @@ namespace {
             catch (const std::exception& exception) {
                 std::cout << "Exception caught by guard: \"" << exception.what() << "\"" << std::endl;
             }
+        }
 
-            status = RpcRevertToSelf();
-            if (status != RPC_S_OK)
+        if (impersonationActive) {
+
+            const error_status_t statusRevert = RpcRevertToSelf();
+            if (statusRevert != RPC_S_OK)
                 std::cout << "Impersonation could not be reverted" << std::endl;
+            else
+                std::cout << "Impersonation reverted" << std::endl;
+
+            status = statusRevert != RPC_S_OK ? statusRevert : status;
         }
 
         return status;
